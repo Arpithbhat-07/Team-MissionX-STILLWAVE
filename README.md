@@ -137,7 +137,7 @@ Safari (iOS)
 
 Modern desktop browsers
 
-🔒** Accessibility & Compatibility**
+🔒**Accessibility & Compatibility**
 
 Fully responsive layout
 
@@ -147,7 +147,7 @@ Keyboard support for piano
 
 Graceful fallback if vibration is unsupported
 
-🏗 ** Architecture Overview**
+🏗 **Architecture Overview**
 
 Single-page application with:
 
