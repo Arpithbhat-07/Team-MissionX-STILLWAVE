@@ -1,4 +1,4 @@
-🌊 STILLWAVE
+🌊 STILLWAVE:
 Pop Stress. Feel Light.
 
 STILLWAVE is a frictionless, touch-based stress relief web application designed to reduce cognitive load and promote emotional regulation through interactive micro-interventions.
