@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="theme-color" content="#020c12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
+<title>STILLWAVE — Stress Relief</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=Rajdhani:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#020c12;--deep:#041520;--panel:#071e2d;
+  --teal:#00e5cc;--teal2:#00b4d8;--amber:#f4a261;
+  --rose:#e76f51;--green:#52b788;--text:#caf0f8;
+  --muted:#4a7a8a;--border:rgba(0,229,204,0.1);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+  font-family:'Rajdhani',sans-serif;touch-action:none;user-select:none;cursor:default}
+
+#bg-canvas{position:fixed;inset:0;z-index:0}
+body::after{content:'';position:fixed;inset:0;z-index:600;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23f)' opacity='0.03'/%3E%3C/svg%3E");opacity:.4}
+
+.screen{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;opacity:0;pointer-events:none;transition:opacity .7s ease}
+.screen.show{opacity:1;pointer-events:all}
+
+/* ── LANDING ── */
+#s0{background:radial-gradient(ellipse at 50% 60%,rgba(0,60,80,.6) 0%,transparent 70%)}
+.brand{font-family:'Playfair Display',serif;font-size:clamp(3rem,9vw,7rem);font-weight:300;
+  letter-spacing:.12em;background:linear-gradient(160deg,#caf0f8 0%,var(--teal) 45%,#90e0ef 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;animation:fadeUp 1.2s ease both}
+.brand-sub{font-size:.65rem;letter-spacing:.45em;text-transform:uppercase;color:var(--muted);
+  margin-top:.8rem;animation:fadeUp 1.2s .25s ease both}
+.start-hint{margin-top:3.5rem;font-size:.75rem;color:var(--muted);letter-spacing:.15em;
+  animation:fadeUp 1.2s .5s ease both;text-align:center;line-height:2.2}
+.start-hint span{color:var(--teal)}
+.pulse-ring{width:70px;height:70px;border-radius:50%;border:1.5px solid var(--teal);
+  margin:1.5rem auto 0;animation:ringPulse 2s ease infinite;opacity:.5}
+.pulse-ring:nth-child(2){animation-delay:.7s}
+
+/* ── TOOLS HOME ── */
+#s2{text-align:center;padding:2rem 1rem}
+.pick-label{font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.2rem}
+.relief-cards{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;max-width:560px}
+.rcard{padding:1rem 1.2rem;border-radius:16px;border:1px solid var(--border);background:rgba(7,30,45,.8);
+  cursor:pointer;transition:all .25s;min-width:110px;text-align:center}
+.rcard:hover,.rcard:active{transform:translateY(-4px);border-color:rgba(0,229,204,.4);box-shadow:0 12px 40px rgba(0,229,204,.1)}
+.rcard .ri{font-size:1.8rem;margin-bottom:.4rem}
+.rcard .rn{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase}
+.rcard .rd{font-size:.55rem;color:var(--muted);margin-top:.2rem}
+
+/* ── BREATHE ── */
+#s3 .tool-title,#s4 .tool-title,#s5 .tool-title,#s7 .tool-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-style:italic;margin-bottom:.4rem}
+#s3 .tool-note,#s4 .tool-note,#s5 .tool-note,#s7 .tool-note{font-size:.6rem;color:var(--muted);letter-spacing:.15em;margin-bottom:2.5rem;text-align:center}
+#orb-wrap{position:relative;width:220px;height:220px;display:flex;align-items:center;justify-content:center}
+#breath-orb{width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle at 38% 35%,rgba(0,229,204,.75),rgba(0,229,204,.08));
+  box-shadow:0 0 60px rgba(0,229,204,.25),0 0 120px rgba(0,229,204,.08);transition:transform .1s;cursor:pointer}
+.orb-ring{position:absolute;border-radius:50%;border:1px solid rgba(0,229,204,.15)}
+.orb-ring:nth-child(1){inset:-18px}.orb-ring:nth-child(2){inset:-32px;border-color:rgba(0,229,204,.07)}
+#breath-phase-label{font-family:'Playfair Display',serif;font-size:1.6rem;font-style:italic;margin-top:2rem;color:var(--teal);min-height:2.2rem;text-align:center}
+#breath-seconds{font-size:.65rem;color:var(--muted);margin-top:.4rem;letter-spacing:.1em;text-align:center;min-height:1.2rem}
+.breath-progress{display:flex;gap:.4rem;margin-top:1.5rem;justify-content:center}
+.bp-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.1);transition:background .3s}
+.bp-dot.done{background:var(--teal)}
+
+/* ── SWIPE ── */
+#s4{background:radial-gradient(ellipse at 50% 40%, rgba(40,10,5,.7) 0%, transparent 65%)}
+#s4 .tool-title{margin-bottom:.3rem}
+#s4 .tool-note{margin-bottom:1.8rem}
+#card-arena{
+  width:min(360px,88vw);
+  height:200px;
+  position:relative;
+  overflow:hidden;
+}
+/* Single card — full opacity, no stacking, centered */
+.tcard{
+  position:absolute;inset:0;
+  border-radius:22px;
+  border:1px solid rgba(244,162,97,.35);
+  background:linear-gradient(145deg,rgba(40,15,5,.95),rgba(30,10,3,.98));
+  box-shadow:0 8px 40px rgba(0,0,0,.5), inset 0 1px 0 rgba(244,162,97,.12);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2rem 1.8rem;
+  font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;
+  color:var(--text);text-align:center;line-height:1.7;
+  cursor:grab;will-change:transform;
+  backface-visibility:hidden;
+  transition:box-shadow .2s;
+}
+.tcard::before{
+  content:'';position:absolute;inset:0;border-radius:22px;
+  background:radial-gradient(ellipse at 30% 20%, rgba(244,162,97,.07), transparent 60%);
+  pointer-events:none;
+}
+.tcard.dragging{cursor:grabbing;box-shadow:0 24px 60px rgba(0,0,0,.7),inset 0 1px 0 rgba(244,162,97,.2)}
+
+/* Direction hint overlays that appear while dragging */
+.tcard .hint-left,.tcard .hint-right{
+  position:absolute;top:50%;transform:translateY(-50%);
+  font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
+  opacity:0;transition:opacity .15s;pointer-events:none;
+  font-family:'Rajdhani',sans-serif;font-style:normal;
+}
+.tcard .hint-left{left:1.2rem;color:#e76f51}
+.tcard .hint-right{right:1.2rem;color:var(--teal)}
+
+/* Progress dots */
+#swipe-dots{display:flex;gap:.5rem;justify-content:center;margin-top:1.4rem}
+.sw-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.12);transition:background .3s,transform .3s}
+.sw-dot.done{background:rgba(244,162,97,.7);transform:scale(.7)}
+.sw-dot.current{background:var(--amber);box-shadow:0 0 8px rgba(244,162,97,.6)}
+
+#swipe-tip{font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-align:center;margin-top:1rem}
+#swipe-score{font-family:'Playfair Display',serif;font-style:italic;font-size:.85rem;color:var(--amber);text-align:center;margin-top:.5rem;min-height:1.4rem}
+.poof-particle{position:fixed;pointer-events:none;z-index:700;font-size:1.2rem;animation:poofAnim .8s ease forwards}
+
+
+
+/* ════════════════════════════════════════
+   PIANO SCREEN
+════════════════════════════════════════ */
+#s7{
+  background:radial-gradient(ellipse at 50% 80%, rgba(0,40,60,.7) 0%,transparent 65%);
+  justify-content:flex-start;padding-top:0;overflow:hidden;
+}
+
+/* falling notes area */
+#notes-lane{
+  width:100%;flex:1;position:relative;overflow:hidden;
+  min-height:0;
+}
+
+/* Score & status bar */
+#piano-topbar{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:.8rem 1.5rem .5rem;flex-shrink:0;z-index:10;
+}
+.piano-title-sm{font-family:'Playfair Display',serif;font-style:italic;font-size:1.1rem;color:var(--teal)}
+.piano-status{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+#piano-score{font-size:.9rem;color:var(--text);letter-spacing:.05em}
+#piano-score span{color:var(--teal);font-size:1.1rem}
+
+/* song selector */
+#song-picker{
+  display:flex;gap:.6rem;padding:.3rem 1.5rem .6rem;flex-shrink:0;flex-wrap:wrap;
+}
+.song-btn{
+  padding:.3rem .9rem;border-radius:100px;font-size:.55rem;letter-spacing:.12em;
+  text-transform:uppercase;border:1px solid var(--border);background:transparent;
+  color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Rajdhani',sans-serif;
+}
+.song-btn.active,.song-btn:hover{border-color:var(--teal);color:var(--teal);background:rgba(0,229,204,.07)}
+
+/* Piano keys wrapper */
+#piano-wrap{
+  width:100%;display:flex;justify-content:center;align-items:flex-end;
+  padding:0 0 .5rem;position:relative;z-index:10;flex-shrink:0;
+}
+#piano-keys{
+  display:flex;position:relative;
+  border-radius:0 0 12px 12px;overflow:visible;
+}
+
+/* White keys */
+.wkey{
+  width:44px;height:130px;
+  border:1px solid rgba(0,229,204,.15);
+  border-top:none;border-radius:0 0 8px 8px;
+  background:linear-gradient(180deg,rgba(200,240,245,.1) 0%,rgba(200,240,245,.04) 100%);
+  position:relative;cursor:pointer;flex-shrink:0;
+  transition:background .08s,box-shadow .08s;
+  display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:.5rem;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:none;
+}
+.wkey.active{
+  background:linear-gradient(180deg,rgba(0,229,204,.5) 0%,rgba(0,229,204,.15) 100%);
+  box-shadow:0 0 30px rgba(0,229,204,.5),inset 0 -4px 20px rgba(0,229,204,.3);
+}
+.wkey.hit{background:linear-gradient(180deg,rgba(0,229,204,.8) 0%,rgba(0,229,204,.3) 100%) !important;box-shadow:0 0 50px rgba(0,229,204,.8) !important}
+.key-label{font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(0,229,204,.4);pointer-events:none}
+
+/* Black keys */
+.bkey{
+  width:28px;height:82px;
+  background:linear-gradient(180deg,#0a2030 0%,#041018 100%);
+  border:1px solid rgba(0,229,204,.2);border-top:none;
+  border-radius:0 0 6px 6px;
+  position:absolute;top:0;z-index:2;cursor:pointer;
+  transition:background .08s,box-shadow .08s;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:none;
+}
+.bkey.active{
+  background:linear-gradient(180deg,rgba(0,229,204,.6) 0%,rgba(0,180,216,.3) 100%);
+  box-shadow:0 0 25px rgba(0,229,204,.6),inset 0 -3px 12px rgba(0,229,204,.4);
+}
+.bkey.hit{background:linear-gradient(180deg,rgba(0,229,204,.9) 0%,rgba(0,229,204,.5) 100%) !important;box-shadow:0 0 40px rgba(0,229,204,.9) !important}
+
+/* Falling note blocks */
+.fnote{
+  position:absolute;border-radius:6px;
+  background:linear-gradient(180deg,rgba(0,229,204,.7),rgba(0,180,216,.3));
+  box-shadow:0 0 12px rgba(0,229,204,.4);
+  pointer-events:none;z-index:5;
+  will-change:transform;
+  transition:background .1s;
+}
+.fnote.black-note{background:linear-gradient(180deg,rgba(0,180,216,.8),rgba(0,100,160,.4));box-shadow:0 0 10px rgba(0,180,216,.5)}
+.fnote.hit-note{background:linear-gradient(180deg,rgba(0,255,200,.9),rgba(0,229,204,.6)) !important;box-shadow:0 0 20px rgba(0,255,200,.7) !important}
+
+/* hit zone glow line */
+#hit-zone{
+  position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,rgba(0,229,204,.6),transparent);
+  z-index:6;pointer-events:none;
+  box-shadow:0 0 20px rgba(0,229,204,.4);
+}
+
+/* ripple on hit */
+.key-ripple{
+  position:absolute;border-radius:50%;
+  width:60px;height:60px;margin-left:-30px;margin-top:-30px;
+  border:2px solid rgba(0,229,204,.6);
+  animation:rippleOut .5s ease forwards;
+  pointer-events:none;z-index:20;
+}
+@keyframes rippleOut{0%{transform:scale(.5);opacity:1}100%{transform:scale(2.5);opacity:0}}
+
+/* ── DONE ── */
+#s6{text-align:center}
+.done-glyph{font-size:4rem;animation:popIn .6s ease}
+.done-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:300;color:var(--teal);margin-top:1.2rem}
+.done-msg{font-size:.75rem;color:var(--muted);margin-top:.8rem;line-height:2;max-width:300px}
+.done-stats{display:flex;gap:2.5rem;margin-top:2.5rem;justify-content:center}
+.dstat .dval{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--text)}
+.dstat .dlbl{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:.3rem}
+.again-btn{margin-top:3rem;padding:.7rem 2.5rem;border-radius:100px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:.7rem;
+  letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.again-btn:hover{border-color:rgba(0,229,204,.4);color:var(--teal)}
+
+.back{position:absolute;top:1.2rem;left:1.5rem;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);cursor:pointer;z-index:200;transition:color .2s}
+.back:hover{color:var(--text)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{transform:scale(0)}75%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes ringPulse{0%{transform:scale(1);opacity:.5}100%{transform:scale(2.5);opacity:0}}
+@keyframes poofAnim{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-70px) scale(2.5)}}
+
+/* ════════════════════════════════════════
+   SQUEEZE BALL SCREEN  #s8
+════════════════════════════════════════ */
+#s8{
+  background:radial-gradient(ellipse at 50% 60%, rgba(20,0,40,.7) 0%, transparent 65%);
+}
+#sq-title{font-family:'Playfair Display',serif;font-style:italic;font-size:1.4rem;color:var(--text);margin-bottom:.3rem;text-align:center}
+#sq-note{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:2.5rem;text-align:center}
+
+/* Ball container */
+#sq-wrap{
+  position:relative;
+  width:240px;height:240px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+
+/* Outer glow halo */
+#sq-halo{
+  position:absolute;inset:-30px;border-radius:50%;
+  background:radial-gradient(circle,rgba(192,132,252,.15),transparent 70%);
+  pointer-events:none;transition:transform .1s ease,opacity .2s;
+}
+
+/* The ball itself — drawn on canvas for real deformation */
+#sq-canvas{
+  position:relative;z-index:2;
+  cursor:pointer;
+  touch-action:none;
+  -webkit-tap-highlight-color:transparent;
+  border-radius:50%;
+}
+
+/* Stress meter */
+#sq-meter-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;margin-top:1.8rem;width:220px;
+}
+#sq-meter-label{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+#sq-meter-track{width:100%;height:5px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden}
+#sq-meter-fill{height:100%;width:0%;border-radius:100px;background:linear-gradient(90deg,#a78bfa,#c084fc,#e879f9);transition:width .1s ease;box-shadow:0 0 8px rgba(192,132,252,.6)}
+#sq-meter-val{font-size:.65rem;color:#c084fc;min-width:3ch;text-align:right;letter-spacing:.05em}
+
+/* Squeeze count & message */
+#sq-count{
+  margin-top:1.2rem;
+  font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:300;
+  color:#c084fc;line-height:1;text-align:center;
+  transition:transform .1s ease;
+}
+#sq-msg{
+  font-size:.7rem;color:var(--muted);text-align:center;margin-top:.5rem;
+  min-height:1.2rem;letter-spacing:.05em;font-style:italic;
+  font-family:'Playfair Display',serif;
+  transition:opacity .3s;
+}
+#sq-streak{
+  font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(192,132,252,.5);text-align:center;margin-top:.3rem;min-height:1rem;
+}
+
+/* Particle canvas overlay */
+#sq-particles{
+  position:absolute;inset:0;pointer-events:none;z-index:10;
+  border-radius:50%;
+}
+
+
+/* ════════════════════════════════════════
+   FLOATING BUBBLES
+════════════════════════════════════════ */
+#bubble-layer{
+  position:fixed;inset:0;z-index:650;pointer-events:none;overflow:hidden;
+}
+.bubble{
+  position:absolute;
+  bottom:-120px;
+  border-radius:50%;
+  pointer-events:all;
+  cursor:pointer;
+  will-change:transform,opacity;
+  /* glassy look */
+  background:radial-gradient(circle at 32% 28%,
+    rgba(255,255,255,0.45) 0%,
+    rgba(180,240,255,0.12) 40%,
+    rgba(0,229,204,0.06) 100%);
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:
+    inset 2px 3px 6px rgba(255,255,255,0.35),
+    inset -2px -2px 6px rgba(0,180,216,0.15),
+    0 4px 20px rgba(0,229,204,0.1);
+  animation: bubbleRise var(--dur,14s) linear forwards;
+  transition: transform .08s ease;
+}
+.bubble:hover{
+  border-color:rgba(255,255,255,0.45);
+  box-shadow:
+    inset 2px 3px 8px rgba(255,255,255,0.5),
+    inset -2px -2px 8px rgba(0,180,216,0.2),
+    0 0 20px rgba(0,229,204,0.25);
+}
+/* glint dot inside each bubble */
+.bubble::before{
+  content:'';
+  position:absolute;
+  top:18%;left:22%;
+  width:28%;height:16%;
+  border-radius:50%;
+  background:rgba(255,255,255,0.55);
+  filter:blur(1px);
+  pointer-events:none;
+}
+/* pop burst */
+.bubble.popping{
+  animation: bubblePop .25s ease forwards !important;
+  pointer-events:none;
+}
+@keyframes bubbleRise{
+  0%  { transform:translateX(0) translateY(0);   opacity:0;   }
+  5%  { opacity:1; }
+  90% { opacity:.85; }
+  100%{ transform:translateX(var(--drift,0px)) translateY(calc(-100vh - 140px)); opacity:0; }
+}
+@keyframes bubblePop{
+  0%  { transform:scale(1);   opacity:1;  }
+  50% { transform:scale(1.5); opacity:.6; }
+  100%{ transform:scale(2.2); opacity:0;  }
+}
+/* ripple ring after pop */
+.pop-ring{
+  position:fixed;border-radius:50%;pointer-events:none;z-index:651;
+  border:1.5px solid rgba(0,229,204,0.7);
+  animation:popRing .5s ease forwards;
+}
+@keyframes popRing{
+  0%  { transform:scale(.5); opacity:1; }
+  100%{ transform:scale(2.8); opacity:0; }
+}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div id="bubble-layer"></div>
+
+<!-- LANDING -->
+<div class="screen show" id="s0">
+  <div class="brand">STILLWAVE</div>
+  <div class="brand-sub">POP STRESS, FEEL LIGHT</div>
+  <div style="position:relative;width:70px;height:70px;margin:2.5rem auto 0">
+    <div class="pulse-ring"></div><div class="pulse-ring"></div>
+  </div>
+  <div class="start-hint">Pop a bubble to <span>begin</span></div>
+</div>
+
+<!-- TOOLS HOME -->
+<div class="screen" id="s2">
+  <div class="brand" style="font-size:clamp(1.8rem,6vw,3rem);margin-bottom:.5rem">STILLWAVE</div>
+  <div class="pick-label" style="margin-top:0;margin-bottom:1.5rem">choose your relief</div>
+  <div class="relief-cards">
+    <div class="rcard" onclick="launchTool('breathe')"><div class="ri">🌊</div><div class="rn">Breathe</div><div class="rd">Guided ORB</div></div>
+    <div class="rcard" onclick="launchTool('swipe')"><div class="ri">🌀</div><div class="rn">Release</div><div class="rd">Swipe Thoughts</div></div>
+    <div class="rcard" onclick="launchTool('piano')" style="border-color:rgba(0,229,204,.25)"><div class="ri">🎹</div><div class="rn">Piano</div><div class="rd">Hold Keys to Play</div></div>
+    <div class="rcard" onclick="launchTool('squeeze')" style="border-color:rgba(192,132,252,.25)"><div class="ri">🫧</div><div class="rn">Squeeze</div><div class="rd">Stress Ball</div></div>
+  </div>
+</div>
+
+<!-- BREATHE -->
+<div class="screen" id="s3">
+  <span class="back" onclick="goTo('s2')">← Back</span>
+  <div class="tool-title">Breathe with the wave</div>
+  <div class="tool-note" id="breathe-note">4-7-8 Calming breath</div>
+  <div id="orb-wrap">
+    <div class="orb-ring"></div><div class="orb-ring"></div>
+    <div id="breath-orb"></div>
+  </div>
+  <div id="breath-phase-label">Tap orb to begin</div>
+  <div id="breath-seconds"></div>
+  <div class="breath-progress" id="breath-progress"></div>
+</div>
+
+<!-- SWIPE -->
+<div class="screen" id="s4">
+  <span class="back" onclick="goTo('s2')">← Back</span>
+  <div class="tool-title">Let them go</div>
+  <div class="tool-note">Drag each thought away — release it</div>
+  <div id="card-arena"></div>
+  <div id="swipe-dots"></div>
+  <div id="swipe-tip">← Drag and fling →</div>
+  <div id="swipe-score"></div>
+</div>
+
+
+
+<!-- SQUEEZE BALL -->
+<div class="screen" id="s8">
+  <span class="back" onclick="goTo('s2')">← Back</span>
+  <div id="sq-title">Squeeze the stress away</div>
+  <div id="sq-note">Press &amp; hold — release — repeat</div>
+  <div id="sq-wrap">
+    <div id="sq-halo"></div>
+    <canvas id="sq-canvas" width="200" height="200"></canvas>
+    <canvas id="sq-particles" width="240" height="240"></canvas>
+  </div>
+  <div id="sq-meter-wrap">
+    <div style="display:flex;justify-content:space-between;width:100%;align-items:center">
+      <span id="sq-meter-label">Squeeze intensity</span>
+      <span id="sq-meter-val">0</span>
+    </div>
+    <div id="sq-meter-track"><div id="sq-meter-fill"></div></div>
+  </div>
+  <div id="sq-count">0</div>
+  <div id="sq-msg">Hold the ball to begin</div>
+  <div id="sq-streak"></div>
+</div>
+
+<!-- DONE -->
+<div class="screen" id="s6">
+  <div class="done-glyph">✦</div>
+  <div class="done-title">Session complete</div>
+  <div class="done-msg">You showed up for yourself.<br>That is always enough.</div>
+  <div class="done-stats">
+    <div class="dstat"><div class="dval" id="d-time">—</div><div class="dlbl">Seconds</div></div>
+    <div class="dstat"><div class="dval" id="d-level">—</div><div class="dlbl">Stress level</div></div>
+  </div>
+  <button class="again-btn" onclick="resetAll()">Begin again</button>
+</div>
+
+<!-- PIANO -->
+<div class="screen" id="s7" style="padding:0">
+  <span class="back" onclick="stopPiano();goTo('s2')" style="top:1rem">← Back</span>
+
+  <div id="piano-topbar">
+    <div class="piano-title-sm">Stillwave piano</div>
+    <div style="text-align:center">
+      <div id="piano-score">notes <span id="score-val">0</span></div>
+      <div class="piano-status" id="piano-status">Hold keys as notes arrive</div>
+    </div>
+    <div class="piano-status">Hold to play</div>
+  </div>
+
+  <div id="song-picker">
+    <button class="song-btn active" data-song="moonlight">Moonlight</button>
+    <button class="song-btn" data-song="river">River Flows in You</button>
+    <button class="song-btn" data-song="canon">Canon</button>
+    <button class="song-btn" data-song="free">Free Play</button>
+  </div>
+
+  <div id="notes-lane">
+    <div id="hit-zone"></div>
+  </div>
+
+  <div id="piano-wrap">
+    <div id="piano-keys"></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// CANVAS BACKGROUND
+// ════════════════════════════════════════════════
+const canvas=document.getElementById('bg-canvas');
+const ctx=canvas.getContext('2d');
+let W,H,particles=[];
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;initP()}
+function initP(){particles=Array.from({length:80},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+.5,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2,a:Math.random(),da:(Math.random()*.005+.002)*(Math.random()<.5?1:-1),hue:Math.random()*40+170}))}
+function drawBG(){
+  ctx.clearRect(0,0,W,H);
+  const g=ctx.createRadialGradient(W*.5,H*.6,0,W*.5,H*.5,Math.max(W,H)*.75);
+  g.addColorStop(0,'rgba(0,40,60,.85)');g.addColorStop(1,'rgba(2,12,18,1)');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  particles.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.a+=p.da;
+    if(p.a>1||p.a<0)p.da*=-1;
+    if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+    if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+    const gp=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);
+    gp.addColorStop(0,`hsla(${p.hue},100%,70%,${p.a*.7})`);gp.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r*4,0,Math.PI*2);ctx.fillStyle=gp;ctx.fill();
+  });
+  requestAnimationFrame(drawBG);
+}
+window.addEventListener('resize',resize);resize();drawBG();
+
+// SCREENS
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+  // Bubbles only pop and spawn on the home screen
+  if(window.setBubblesActive) window.setBubblesActive(id === 's0');
+}
+
+// LANDING
+document.getElementById('s0').addEventListener('click',()=>{
+  vibe([15,30,25]);
+  goTo('s2');
+});
+
+// ════════════════════════════════════════════════
+// HAPTIC ENGINE
+// ════════════════════════════════════════════════
+const CAN_VIBE = ('vibrate' in navigator);
+
+/* Core fire-and-forget vibrator */
+function vibe(pattern){
+  if(!CAN_VIBE) return;
+  try{ navigator.vibrate(0); navigator.vibrate(pattern); }catch(e){}
+}
+
+/*
+  Breathing vibrations — the centrepiece.
+  Each phase gets a unique tactile texture so the user
+  can literally FEEL inhale vs exhale vs hold.
+
+  INHALE  → rising pulses (short→long, gaps shrink) — feels like drawing air in
+  HOLD    → steady low-intensity throb — suspended stillness
+  EXHALE  → falling pulses (long→short, gaps grow)  — feels like air flowing out
+  REST    → single feather-light tap every ~1s       — quiet space
+*/
+function buildRisingPattern(ms){
+  // Pulses grow from 18ms → 140ms; gaps shrink from 90ms → 30ms
+  const steps = Math.max(Math.round(ms / 480), 3);
+  const arr = [];
+  for(let i = 0; i < steps; i++){
+    const t   = i / (steps - 1);
+    const on  = Math.round(18  + t * 122);   // 18 → 140
+    const off = Math.round(90  - t * 60);    // 90 → 30
+    arr.push(on);
+    if(i < steps - 1) arr.push(off);
+  }
+  return arr;
+}
+function buildFallingPattern(ms){
+  // Mirror of rising — starts heavy, fades out
+  const steps = Math.max(Math.round(ms / 480), 3);
+  const arr = [];
+  for(let i = 0; i < steps; i++){
+    const t   = i / (steps - 1);
+    const on  = Math.round(140 - t * 122);   // 140 → 18
+    const off = Math.round(30  + t * 60);    // 30 → 90
+    arr.push(on);
+    if(i < steps - 1) arr.push(off);
+  }
+  return arr;
+}
+function buildHoldPattern(ms){
+  // Soft equal throb every ~700ms — a heartbeat of stillness
+  const beats = Math.max(Math.round(ms / 700), 2);
+  const arr = [];
+  for(let i = 0; i < beats; i++){
+    arr.push(35);
+    if(i < beats - 1) arr.push(660);
+  }
+  return arr;
+}
+function buildRestPattern(ms){
+  // Whisper-light single tap per second
+  const beats = Math.max(Math.round(ms / 1000), 1);
+  const arr = [];
+  for(let i = 0; i < beats; i++){
+    arr.push(12);
+    if(i < beats - 1) arr.push(985);
+  }
+  return arr;
+}
+
+/* Map phase names → pattern builders */
+function breatheVibe(phaseName, durationMs){
+  if(!CAN_VIBE) return;
+  const n = phaseName.toLowerCase();
+  let pattern;
+  if(n.includes('inhale') || n.includes('deep'))    pattern = buildRisingPattern(durationMs);
+  else if(n.includes('hold'))                        pattern = buildHoldPattern(durationMs);
+  else if(n.includes('exhale') || n.includes('out')) pattern = buildFallingPattern(durationMs);
+  else                                               pattern = buildRestPattern(durationMs);
+  vibe(pattern);
+}
+
+/* Piano key haptics — subtle per note, stronger on hit */
+function vibeKey(isBlack){ vibe(isBlack ? [12] : [18]); }
+function vibeHit(){        vibe([25,15,45]); }
+
+/* Navigation / transitions */
+function vibeNav(){    vibe([20,20,20]); }
+function vibeResult(){ vibe([30,20,50,20,80]); }
+
+// ════════════════════════════════════════════════
+// PRESS DETECTOR
+// ════════════════════════════════════════════════
+let detectedLevel='medium',sessionStart=0,sessionTool='';
+
+// LAUNCH TOOLS
+function launchTool(tool){sessionStart=Date.now();sessionTool=tool;vibeNav();if(tool==='breathe'){goTo('s3');startBreathe()}else if(tool==='swipe'){goTo('s4');startSwipe()}else if(tool==='piano'){goTo('s7');startPiano()}else if(tool==='squeeze'){goTo('s8');startSqueeze()}}
+
+// ════════════════════════════════════════════════
+// BREATHE
+// ════════════════════════════════════════════════
+const BREATHE_PATTERNS={low:{name:'4-6-2 calming breath',phases:[{n:'Inhale',d:4000,s:1.5},{n:'Exhale slowly',d:6000,s:.9},{n:'Rest',d:2000,s:.9}]},medium:{name:'4-7-8 anxiety release',phases:[{n:'Inhale',d:4000,s:1.5},{n:'Hold',d:7000,s:1.5},{n:'Exhale',d:8000,s:.85}]},high:{name:'Reset breath — exhale first',phases:[{n:'Empty out',d:3000,s:.8},{n:'Deep inhale',d:5000,s:1.6},{n:'Hold',d:2000,s:1.6},{n:'Long exhale',d:7000,s:.85}]}};
+let breathTimer=null,breathRunning=false;
+function startBreathe(){
+  // Always reset state cleanly on entry
+  breathRunning=false;
+  clearTimeout(breathTimer);
+  breathTimer=null;
+
+  const pat=BREATHE_PATTERNS[detectedLevel]||BREATHE_PATTERNS.medium;
+  document.getElementById('breathe-note').textContent=pat.name;
+  const prog=document.getElementById('breath-progress');
+  prog.innerHTML=Array.from({length:4},(_,i)=>`<div class="bp-dot" id="bdot-${i}"></div>`).join('');
+  const orb=document.getElementById('breath-orb');
+  const lbl=document.getElementById('breath-phase-label');
+  const sec=document.getElementById('breath-seconds');
+
+  // Reset orb visual
+  orb.style.transition='none';
+  orb.style.transform='scale(1)';
+  lbl.textContent='tap the orb to begin';
+  sec.textContent='';
+
+  let phaseIdx=0,cycle=0,ticker=null;
+
+  // Remove any old listener before setting new one
+  const newOrb=orb.cloneNode(true);
+  orb.parentNode.replaceChild(newOrb,orb);
+  const freshOrb=document.getElementById('breath-orb');
+
+  freshOrb.addEventListener('click',function onOrbClick(){
+    if(breathRunning){
+      clearTimeout(breathTimer);
+      clearInterval(ticker);
+      breathRunning=false;
+      if(CAN_VIBE) navigator.vibrate(0); // cancel ongoing pattern
+      freshOrb.style.transition='transform 0.6s ease';
+      freshOrb.style.transform='scale(1)';
+      lbl.textContent='paused — tap to resume';
+      sec.textContent='';
+      return;
+    }
+    breathRunning=true;
+    runPhase();
+  });
+
+  function runPhase(){
+    if(!breathRunning)return;
+    if(cycle>=4){
+      lbl.textContent='beautiful ✦';
+      sec.textContent='';
+      breathRunning=false;
+      freshOrb.style.transition='transform 1s ease';
+      freshOrb.style.transform='scale(1)';
+      vibe([40,30,40,30,80]); // gentle completion buzz
+      setTimeout(showDone,1500);
+      return;
+    }
+    const p=pat.phases[phaseIdx];
+    lbl.textContent=p.n;
+    breatheVibe(p.n, p.d);  // ← haptic texture for this phase
+    // Force reflow so transition fires even if scale is same value
+    void freshOrb.offsetWidth;
+    freshOrb.style.transition=`transform ${p.d}ms cubic-bezier(.4,0,.2,1)`;
+    freshOrb.style.transform=`scale(${p.s})`;
+    let r=Math.round(p.d/1000);
+    sec.textContent=r+'s';
+    clearInterval(ticker);
+    ticker=setInterval(()=>{r--;if(!breathRunning){clearInterval(ticker);return;}sec.textContent=r>0?r+'s':'';if(r<=0)clearInterval(ticker);},1000);
+    clearTimeout(breathTimer);
+    breathTimer=setTimeout(()=>{
+      if(!breathRunning)return;
+      phaseIdx=(phaseIdx+1)%pat.phases.length;
+      if(phaseIdx===0){
+        cycle++;
+        const d=document.getElementById('bdot-'+(cycle-1));
+        if(d)d.classList.add('done');
+      }
+      runPhase();
+    },p.d);
+  }
+}
+
+// SWIPE — one card at a time, full opacity, clear and distinct
+const THOUGHTS_BY_LEVEL={
+  low:['I want more peace','Things feel a little off','I wish I could slow down','I keep second-guessing myself','I need more energy today'],
+  medium:["I'm behind on everything","I can't seem to focus","People are counting on me","I made a mistake today","I don't have enough time"],
+  high:["I can't breathe properly","My mind won't stop racing","Everything is too much","I feel out of control","I'm not good enough","Nothing will work out"]
+};
+
+function startSwipe(){
+  const arena=document.getElementById('card-arena');
+  const dotsEl=document.getElementById('swipe-dots');
+  const scoreEl=document.getElementById('swipe-score');
+  arena.innerHTML=''; dotsEl.innerHTML='';
+
+  const pool=THOUGHTS_BY_LEVEL[detectedLevel]||THOUGHTS_BY_LEVEL.medium;
+  const cards=[...pool].sort(()=>Math.random()-.5);
+  const total=cards.length;
+  let current=0;
+  let animating=false;
+
+  // Build progress dots
+  cards.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='sw-dot'+(i===0?' current':'');
+    d.id='swdot-'+i;
+    dotsEl.appendChild(d);
+  });
+
+  scoreEl.textContent='';
+
+  function showCard(idx, fromDir){
+    // fromDir: 'left' slide in from right, 'right' slide in from left
+    if(idx>=total){setTimeout(showDone,600);return;}
+    animating=true;
+
+    const el=document.createElement('div');
+    el.className='tcard';
+    // Hint labels
+    el.innerHTML=`<span class="hint-left">release</span>${cards[idx]}<span class="hint-right">let go</span>`;
+    // Slide in from off-screen
+    const startX = fromDir==='left' ? 400 : -400;
+    el.style.transform=`translateX(${startX}px)`;
+    el.style.opacity='0';
+    arena.appendChild(el);
+
+    // Animate in
+    requestAnimationFrame(()=>{
+      el.style.transition='transform .38s cubic-bezier(.25,.8,.25,1), opacity .3s ease';
+      el.style.transform='translateX(0) rotate(0deg)';
+      el.style.opacity='1';
+      setTimeout(()=>{ el.style.transition=''; animating=false; attachDrag(el, idx); },400);
+    });
+  }
+
+  function attachDrag(el, idx){
+    let sx=0,sy=0,dx=0,dy=0,dragging=false;
+    const hintL=el.querySelector('.hint-left');
+    const hintR=el.querySelector('.hint-right');
+
+    function down(e){
+      dragging=true; el.classList.add('dragging');
+      const t=e.touches?e.touches[0]:e;
+      sx=t.clientX; sy=t.clientY; dx=0; dy=0;
+    }
+    function move(e){
+      if(!dragging)return; e.preventDefault();
+      const t=e.touches?e.touches[0]:e;
+      dx=t.clientX-sx; dy=t.clientY-sy;
+      const rot=dx*0.07;
+      const pull=Math.abs(dx)/120;
+      el.style.transform=`translate(${dx}px,${dy*0.4}px) rotate(${rot}deg)`;
+      el.style.opacity=Math.max(0, 1-Math.abs(dx)/280);
+      // show directional hints
+      if(hintL) hintL.style.opacity = dx<-20 ? Math.min(1,(Math.abs(dx)-20)/80) : '0';
+      if(hintR) hintR.style.opacity = dx>20  ? Math.min(1,(dx-20)/80) : '0';
+    }
+    function up(){
+      if(!dragging)return; dragging=false; el.classList.remove('dragging');
+      if(hintL) hintL.style.opacity='0';
+      if(hintR) hintR.style.opacity='0';
+
+      if(Math.abs(dx)>80 || Math.abs(dy)>80){
+        // Fly off
+        vibe([20,15,35]); // release buzz
+        const flyX=dx>0 ? window.innerWidth+200 : -(window.innerWidth+200);
+        const flyY=dy<-60 ? -window.innerHeight : dy*2;
+        el.style.transition='transform .4s ease, opacity .35s ease';
+        el.style.transform=`translate(${flyX}px,${flyY}px) rotate(${dx*0.25}deg)`;
+        el.style.opacity='0';
+        spawnPoof(sx+dx, sy+dy);
+        // Update dot
+        const dotDone=document.getElementById('swdot-'+idx);
+        if(dotDone){dotDone.classList.remove('current');dotDone.classList.add('done');}
+        const dotNext=document.getElementById('swdot-'+(idx+1));
+        if(dotNext)dotNext.classList.add('current');
+
+        current++;
+        scoreEl.textContent = current<total
+          ? `${current} of ${total} released — keep going`
+          : 'all released ✦';
+
+        setTimeout(()=>{
+          el.remove();
+          showCard(current, dx>0 ? 'right' : 'left');
+        },360);
+      } else {
+        // Snap back
+        el.style.transition='transform .3s cubic-bezier(.34,1.56,.64,1), opacity .2s';
+        el.style.transform='translateX(0) rotate(0deg)';
+        el.style.opacity='1';
+        setTimeout(()=>{el.style.transition='';},320);
+        dx=0; dy=0;
+      }
+
+      el.removeEventListener('mousedown',down);
+      el.removeEventListener('touchstart',down);
+      document.removeEventListener('mousemove',move);
+      document.removeEventListener('touchmove',move);
+      document.removeEventListener('mouseup',up);
+      document.removeEventListener('touchend',up);
+    }
+
+    el.addEventListener('mousedown',down);
+    el.addEventListener('touchstart',down,{passive:false});
+    document.addEventListener('mousemove',move);
+    document.addEventListener('touchmove',move,{passive:false});
+    document.addEventListener('mouseup',up);
+    document.addEventListener('touchend',up);
+  }
+
+  showCard(0, 'left');
+}
+function spawnPoof(x,y){['✦','◈','·','∘'].forEach((g,i)=>{const el=document.createElement('div');el.className='poof-particle';el.textContent=g;el.style.left=x+(Math.random()*40-20)+'px';el.style.top=y+'px';el.style.animationDelay=(i*80)+'ms';document.body.appendChild(el);setTimeout(()=>el.remove(),900);});}
+
+
+// DONE
+function showDone(){const elapsed=Math.round((Date.now()-sessionStart)/1000);document.getElementById('d-time').textContent=elapsed;document.getElementById('d-level').textContent='—';vibe([40,25,40,25,80,25,120]);goTo('s6');}
+function resetAll(){clearTimeout(breathTimer);breathRunning=false;if(CAN_VIBE)navigator.vibrate(0);detectedLevel='medium';stopPiano();if(window.stopSqueeze)stopSqueeze();vibe([15]);goTo('s0');}
+
+// ════════════════════════════════════════════════
+// ██████╗ ██╗ █████╗ ███╗   ██╗ ██████╗
+// ██╔══██╗██║██╔══██╗████╗  ██║██╔═══██╗
+// ██████╔╝██║███████║██╔██╗ ██║██║   ██║
+// ██╔═══╝ ██║██╔══██║██║╚██╗██║██║   ██║
+// ██║     ██║██║  ██║██║ ╚████║╚██████╔╝
+// ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝
+// ════════════════════════════════════════════════
+let audioCtx=null;
+function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+// Key layout: 8 white keys C4-C5 + black keys
+const WHITE_NOTES=[
+  {note:'C4',freq:261.63,label:'C'},
+  {note:'D4',freq:293.66,label:'D'},
+  {note:'E4',freq:329.63,label:'E'},
+  {note:'F4',freq:349.23,label:'F'},
+  {note:'G4',freq:392.00,label:'G'},
+  {note:'A4',freq:440.00,label:'A'},
+  {note:'B4',freq:493.88,label:'B'},
+  {note:'C5',freq:523.25,label:'C'},
+  {note:'D5',freq:587.33,label:'D'},
+  {note:'E5',freq:659.25,label:'E'},
+];
+// Black key positions: after indices 0,1,3,4,5,8 (C#,D#,F#,G#,A#,C#5)
+const BLACK_NOTES=[
+  {note:'C#4',freq:277.18,afterIdx:0},
+  {note:'D#4',freq:311.13,afterIdx:1},
+  {note:'F#4',freq:369.99,afterIdx:3},
+  {note:'G#4',freq:415.30,afterIdx:4},
+  {note:'A#4',freq:466.16,afterIdx:5},
+  {note:'C#5',freq:554.37,afterIdx:8},
+];
+
+// Songs: array of {note, duration(ms), gap(ms)}
+// note = 'C4','D4' etc; duration = how long to hold; gap = wait before next
+const SONGS={
+  moonlight:[
+    // Simplified Moonlight Sonata Adagio feel
+    {n:'E4',d:900,g:100},{n:'G#4',d:900,g:100},{n:'C5',d:900,g:200},
+    {n:'E4',d:900,g:100},{n:'G#4',d:900,g:100},{n:'C5',d:900,g:200},
+    {n:'D4',d:900,g:100},{n:'F#4',d:900,g:100},{n:'A4',d:900,g:200},
+    {n:'D4',d:900,g:100},{n:'F#4',d:900,g:100},{n:'B4',d:900,g:200},
+    {n:'C4',d:900,g:100},{n:'E4',d:900,g:100},{n:'A4',d:900,g:200},
+    {n:'C4',d:900,g:100},{n:'E4',d:900,g:100},{n:'G4',d:900,g:200},
+    {n:'B4',d:1800,g:300},{n:'C5',d:1800,g:300},
+  ],
+  river:[
+    // ── River Flows in You — Yiruma (accurate melody) ──
+    // Phrase A — first statement
+    {n:'A4',d:380,g:50},{n:'B4',d:380,g:50},{n:'C#5',d:380,g:50},{n:'B4',d:380,g:50},
+    {n:'A4',d:380,g:50},{n:'B4',d:380,g:50},{n:'C#5',d:380,g:50},{n:'E5',d:380,g:50},
+    {n:'A4',d:380,g:50},{n:'B4',d:380,g:50},{n:'C#5',d:380,g:50},{n:'B4',d:380,g:50},
+    {n:'A4',d:760,g:80},{n:'E4',d:380,g:50},{n:'A4',d:900,g:200},
+    // Phrase A — second statement
+    {n:'A4',d:380,g:50},{n:'B4',d:380,g:50},{n:'C#5',d:380,g:50},{n:'B4',d:380,g:50},
+    {n:'A4',d:380,g:50},{n:'B4',d:380,g:50},{n:'C#5',d:380,g:50},{n:'E5',d:380,g:50},
+    {n:'A4',d:380,g:50},{n:'B4',d:380,g:50},{n:'C#5',d:380,g:50},{n:'B4',d:380,g:50},
+    {n:'A4',d:760,g:80},{n:'E4',d:380,g:50},{n:'A4',d:900,g:200},
+    // Phrase B — contrasting section
+    {n:'F#4',d:380,g:50},{n:'G#4',d:380,g:50},{n:'A4',d:380,g:50},{n:'B4',d:380,g:50},
+    {n:'C#5',d:380,g:50},{n:'B4',d:380,g:50},{n:'A4',d:760,g:80},{n:'E4',d:760,g:100},
+    {n:'F#4',d:380,g:50},{n:'G#4',d:380,g:50},{n:'A4',d:380,g:50},{n:'B4',d:380,g:50},
+    {n:'C#5',d:1200,g:300},
+    // Phrase C — emotional peak / bridge
+    {n:'E5',d:380,g:50},{n:'D5',d:380,g:50},{n:'C#5',d:380,g:50},{n:'B4',d:380,g:50},
+    {n:'A4',d:380,g:50},{n:'B4',d:380,g:50},{n:'C#5',d:380,g:50},{n:'A4',d:760,g:100},
+    {n:'E5',d:380,g:50},{n:'D5',d:380,g:50},{n:'C#5',d:380,g:50},{n:'B4',d:380,g:50},
+    {n:'A4',d:1400,g:400},
+    // Return to Phrase A (coda)
+    {n:'A4',d:380,g:50},{n:'B4',d:380,g:50},{n:'C#5',d:380,g:50},{n:'B4',d:380,g:50},
+    {n:'A4',d:380,g:50},{n:'B4',d:380,g:50},{n:'C#5',d:380,g:50},{n:'E5',d:380,g:50},
+    {n:'A4',d:380,g:50},{n:'B4',d:380,g:50},{n:'C#5',d:380,g:50},{n:'B4',d:380,g:50},
+    {n:'A4',d:1600,g:500},
+  ],
+  canon:[
+    // Canon in D simplified
+    {n:'D4',d:600,g:100},{n:'A4',d:600,g:100},{n:'B4',d:600,g:100},{n:'F#4',d:600,g:100},
+    {n:'G4',d:600,g:100},{n:'D4',d:600,g:100},{n:'G4',d:600,g:100},{n:'A4',d:600,g:100},
+    {n:'F#4',d:600,g:100},{n:'C#4',d:600,g:100},{n:'D4',d:600,g:100},{n:'A4',d:600,g:100},
+    {n:'B4',d:600,g:100},{n:'F#4',d:600,g:100},{n:'G4',d:600,g:100},{n:'D4',d:1000,g:300},
+  ],
+  free:[] // handled separately
+};
+
+// ── Piano state ──
+let pianoNodes={};   // noteName -> {osc,gain,start}
+let fallingNotes=[];
+let noteRAF=null;
+let currentSong='moonlight';
+let songNoteIdx=0;
+let songScheduler=null;
+let scoreVal=0;
+let laneH=0,laneW=0;
+let keyEls={}; // note -> element
+let pianoActive=false;
+const KEY_W=44,KEY_BW=28;
+
+function buildPiano(){
+  const container=document.getElementById('piano-keys');
+  container.innerHTML='';keyEls={};
+  // White keys
+  WHITE_NOTES.forEach(wn=>{
+    const k=document.createElement('div');
+    k.className='wkey';k.dataset.note=wn.note;
+    k.innerHTML=`<span class="key-label">${wn.label}</span>`;
+    container.appendChild(k);keyEls[wn.note]=k;
+    attachKeyEvents(k,wn.note,wn.freq,false);
+  });
+  // Black keys (positioned absolutely over whites)
+  BLACK_NOTES.forEach(bn=>{
+    const k=document.createElement('div');
+    k.className='bkey';k.dataset.note=bn.note;
+    // Position: center of gap between white keys
+    const leftPx=(bn.afterIdx+1)*KEY_W - KEY_BW/2;
+    k.style.left=leftPx+'px';
+    container.appendChild(k);keyEls[bn.note]=k;
+    attachKeyEvents(k,bn.note,bn.freq,true);
+  });
+}
+
+function attachKeyEvents(el,note,freq,isBlack){
+  function startNote(e){e.preventDefault();e.stopPropagation();vibeKey(isBlack);playNote(note,freq,isBlack);el.classList.add('active');}
+  function stopNote(e){e.preventDefault();stopNote2(note);el.classList.remove('active');}
+  el.addEventListener('mousedown',startNote);
+  el.addEventListener('touchstart',startNote,{passive:false});
+  el.addEventListener('mouseup',stopNote);
+  el.addEventListener('mouseleave',stopNote);
+  el.addEventListener('touchend',stopNote);
+  el.addEventListener('touchcancel',stopNote);
+}
+
+// ── Shared audio nodes (created once) ──
+let sharedReverb=null, sharedFilter=null, masterGain=null;
+
+function getSharedChain(ac){
+  if(sharedReverb && sharedFilter && masterGain) return;
+
+  // Master gain
+  masterGain=ac.createGain();
+  masterGain.gain.value=0.72;
+  masterGain.connect(ac.destination);
+
+  // Warm low-pass — cuts harshness above 3.5kHz
+  sharedFilter=ac.createBiquadFilter();
+  sharedFilter.type='lowpass';
+  sharedFilter.frequency.value=3400;
+  sharedFilter.Q.value=0.5;
+  sharedFilter.connect(masterGain);
+
+  // Gentle hall reverb — longer, smoother impulse with exponential decay
+  sharedReverb=ac.createConvolver();
+  const sr=ac.sampleRate;
+  const len=sr*2.8;          // 2.8 s tail
+  const buf=ac.createBuffer(2,len,sr);
+  for(let c=0;c<2;c++){
+    const d=buf.getChannelData(c);
+    for(let i=0;i<len;i++){
+      // smooth exponential decay, no sharp spikes
+      const decay=Math.pow(1-i/len, 2.4);
+      d[i]=(Math.random()*2-1)*decay*0.25;
+    }
+  }
+  sharedReverb.buffer=buf;
+
+  // Reverb sits at 18% wet mixed with dry signal
+  const reverbGain=ac.createGain();
+  reverbGain.gain.value=0.18;
+  sharedReverb.connect(reverbGain);
+  reverbGain.connect(sharedFilter);
+}
+
+function playNote(note,freq,isBlack){
+  const ac=getAudioCtx();
+  if(ac.state==='suspended')ac.resume().catch(()=>{});
+  getSharedChain(ac);
+
+  // Fade out & stop any existing note on this key
+  if(pianoNodes[note]){
+    const old=pianoNodes[note];
+    delete pianoNodes[note];
+    try{
+      old.env.gain.cancelScheduledValues(ac.currentTime);
+      old.env.gain.setTargetAtTime(0, ac.currentTime, 0.04);
+      old.oscs.forEach(o=>{ try{o.stop(ac.currentTime+0.2);}catch(e){} });
+    }catch(e){}
+  }
+
+  const now=ac.currentTime;
+
+  // ── Tone stack: warm Rhodes/bell character ──
+  // 1. Fundamental — pure sine, main body of the note
+  const osc1=ac.createOscillator();
+  osc1.type='sine';
+  osc1.frequency.value=freq;
+
+  // 2. Second harmonic (octave) — very soft, adds body
+  const osc2=ac.createOscillator();
+  osc2.type='sine';
+  osc2.frequency.value=freq*2;
+
+  // 3. Soft triangle sub-octave — warmth without buzz
+  const osc3=ac.createOscillator();
+  osc3.type='sine';
+  osc3.frequency.value=freq*0.5;
+
+  // Individual gains for each partial
+  const g1=ac.createGain(); g1.gain.value=1.0;     // fundamental loudest
+  const g2=ac.createGain(); g2.gain.value=0.14;    // 2nd harmonic subtle
+  const g3=ac.createGain(); g3.gain.value=0.18;    // sub-octave warmth
+
+  // Envelope — the single most important thing for a soothing sound
+  const env=ac.createGain();
+  env.gain.setValueAtTime(0, now);
+  env.gain.linearRampToValueAtTime(0.38, now+0.025);   // soft 25ms attack (no click)
+  env.gain.setTargetAtTime(0.22, now+0.025, 0.18);     // fast initial decay to sustain
+  env.gain.setTargetAtTime(0.0,  now+0.3,   1.8);      // long gentle tail (piano-like)
+
+  // Wire: oscs → individual gains → env → dry path + reverb send
+  osc1.connect(g1); osc2.connect(g2); osc3.connect(g3);
+  g1.connect(env);  g2.connect(env);  g3.connect(env);
+
+  // Dry path (80%) — direct to filter
+  const dryGain=ac.createGain();
+  dryGain.gain.value=0.82;
+  env.connect(dryGain);
+  dryGain.connect(sharedFilter);
+
+  // Wet path (18%) — through shared reverb
+  env.connect(sharedReverb);
+
+  osc1.start(now); osc2.start(now); osc3.start(now);
+
+  pianoNodes[note]={env, oscs:[osc1,osc2,osc3], gains:[g1,g2,g3,dryGain], start:now};
+  checkHit(note);
+}
+
+function releaseNote(note){
+  if(!pianoNodes[note])return;
+  const ac=getAudioCtx();
+  const node=pianoNodes[note];
+  delete pianoNodes[note];
+  try{
+    // Gentle key-release: slightly faster decay when key lifted
+    node.env.gain.cancelScheduledValues(ac.currentTime);
+    node.env.gain.setTargetAtTime(0, ac.currentTime, 0.22);
+    node.oscs.forEach(o=>{ try{o.stop(ac.currentTime+1.0);}catch(e){} });
+  }catch(e){}
+  if(keyEls[note])keyEls[note].classList.remove('active');
+}
+function stopNote2(note){releaseNote(note);}
+
+function stopAllNotes(){
+  const ac=getAudioCtx();
+  Object.keys(pianoNodes).forEach(note=>{
+    const node=pianoNodes[note];
+    try{
+      node.env.gain.cancelScheduledValues(ac.currentTime);
+      node.env.gain.setValueAtTime(0,ac.currentTime);
+      node.oscs.forEach(o=>{ try{o.stop(ac.currentTime);}catch(e){} });
+    }catch(e){}
+    if(keyEls[note])keyEls[note].classList.remove('active');
+  });
+  pianoNodes={};
+  // Reset shared chain so it's rebuilt fresh next session
+  sharedReverb=null; sharedFilter=null; masterGain=null;
+}
+
+
+
+// ── Keyboard input ──
+const KEY_MAP={'a':'C4','s':'D4','d':'E4','f':'F4','g':'G4','h':'A4','j':'B4','k':'C5','l':'D5',';':'E5','w':'C#4','e':'D#4','t':'F#4','y':'G#4','u':'A#4','o':'C#5'};
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('s7').classList.contains('show')&&KEY_MAP[e.key]&&!e.repeat){
+    const note=KEY_MAP[e.key];
+    const allNotes=[...WHITE_NOTES,...BLACK_NOTES];
+    const nd=allNotes.find(n=>n.note===note);
+    if(nd){vibeKey(note.includes('#'));playNote(note,nd.freq,note.includes('#'));if(keyEls[note])keyEls[note].classList.add('active');}
+  }
+});
+document.addEventListener('keyup',e=>{
+  if(KEY_MAP[e.key]){const note=KEY_MAP[e.key];stopNote2(note);}
+});
+
+// ── Falling notes engine ──
+function getLaneMetrics(){
+  const lane=document.getElementById('notes-lane');
+  const pw=document.getElementById('piano-wrap');
+  laneH=lane.clientHeight;
+  laneW=lane.clientWidth;
+}
+
+function getNoteX(noteName){
+  const el=keyEls[noteName];
+  if(!el)return 0;
+  const lane=document.getElementById('notes-lane');
+  const laneRect=lane.getBoundingClientRect();
+  const keyRect=el.getBoundingClientRect();
+  return keyRect.left-laneRect.left + keyRect.width/2;
+}
+
+function getNoteWidth(noteName){
+  const el=keyEls[noteName];
+  if(!el)return KEY_W-4;
+  return el.clientWidth-6;
+}
+
+function spawnFallingNote(noteName,durationMs,isBlack){
+  const lane=document.getElementById('notes-lane');
+  getLaneMetrics();
+  const FALL_SPEED=160;
+  const noteH=Math.max((durationMs/1000)*FALL_SPEED,32);
+  const x=getNoteX(noteName);
+  const w=getNoteWidth(noteName);
+  const el=document.createElement('div');
+  el.className='fnote'+(isBlack?' black-note':'');
+  el.style.cssText='width:'+w+'px;height:'+noteH+'px;left:'+(x-w/2)+'px;top:0;transform:translateY('+(-(noteH))+'px)';
+  lane.appendChild(el);
+  // startY is negative (above lane), speed px/s
+  fallingNotes.push({el,noteName,spawnTime:performance.now(),startY:-(noteH),speed:FALL_SPEED,noteH,laneH,hit:false,done:false});
+}
+
+function animateFalling(){
+  if(!pianoActive){noteRAF=null;return;}
+  const now=performance.now();
+  let i=fallingNotes.length;
+  while(i--){
+    const fn=fallingNotes[i];
+    if(fn.done){fn.el.remove();fallingNotes.splice(i,1);continue;}
+    const elapsed=(now-fn.spawnTime)*0.001;
+    const y=fn.startY+elapsed*fn.speed;
+    fn.el.style.transform='translateY('+y+'px)';
+    if(y>fn.laneH){fn.el.remove();fallingNotes.splice(i,1);}
+  }
+  noteRAF=requestAnimationFrame(animateFalling);
+}
+
+function checkHit(note){
+  const now=performance.now();
+  fallingNotes.forEach(fn=>{
+    if(fn.noteName!==note||fn.hit)return;
+    const elapsed=(now-fn.spawnTime)*0.001;
+    const y=fn.startY+elapsed*fn.speed;
+    const bottom=y+fn.noteH;
+    // Hit zone: note bottom within 60px of lane bottom
+    if(bottom>laneH-60 && y<laneH+10){
+      fn.hit=true;fn.done=true;
+      fn.el.classList.add('hit-note');
+      vibeHit();
+      scoreVal++;document.getElementById('score-val').textContent=scoreVal;
+      flashKey(note);
+      spawnRipple(note);
+    }
+  });
+}
+
+function flashKey(note){
+  const el=keyEls[note];if(!el)return;
+  el.classList.add('hit');setTimeout(()=>el.classList.remove('hit'),300);
+}
+
+function spawnRipple(note){
+  const el=keyEls[note];if(!el)return;
+  const lane=document.getElementById('notes-lane');
+  const laneRect=lane.getBoundingClientRect();
+  const keyRect=el.getBoundingClientRect();
+  const x=keyRect.left-laneRect.left+keyRect.width/2;
+  const r=document.createElement('div');r.className='key-ripple';
+  r.style.left=x+'px';r.style.top=(laneH-20)+'px';
+  lane.appendChild(r);setTimeout(()=>r.remove(),500);
+}
+
+// ── Song scheduler ──
+function scheduleSong(songKey){
+  const notes=SONGS[songKey];if(!notes||!notes.length)return;
+  songNoteIdx=0;
+  function scheduleNext(){
+    if(!pianoActive||songNoteIdx>=notes.length){
+      // loop after pause
+      if(pianoActive){songScheduler=setTimeout(()=>{songNoteIdx=0;scheduleNext();},2000);}
+      return;
+    }
+    const entry=notes[songNoteIdx++];
+    const allNotes=[...WHITE_NOTES,...BLACK_NOTES];
+    const nd=allNotes.find(n=>n.note===entry.n);
+    if(nd){
+      spawnFallingNote(entry.n,entry.d,entry.n.includes('#'));
+      // Notes only play when user presses the key — no auto-play
+    }
+    songScheduler=setTimeout(scheduleNext,(entry.d+entry.g));
+  }
+  scheduleNext();
+}
+
+function startPiano(){
+  pianoActive=true;scoreVal=0;
+  document.getElementById('score-val').textContent='0';
+  ensureAudioRunning();
+  buildPiano();
+  getLaneMetrics();
+  // Start animation loop
+  if(!noteRAF)noteRAF=requestAnimationFrame(animateFalling);
+  // Default song
+  currentSong='moonlight';
+  highlightSongBtn('moonlight');
+  document.getElementById('piano-status').textContent='hold keys as notes arrive';
+  setTimeout(()=>{scheduleSong(currentSong);},800);
+
+  // Song buttons
+  document.querySelectorAll('.song-btn').forEach(btn=>{
+    btn.onclick=()=>{
+      const s=btn.dataset.song;currentSong=s;
+      clearTimeout(songScheduler);fallingNotes.forEach(fn=>fn.done=true);
+      highlightSongBtn(s);
+      if(s==='free'){document.getElementById('piano-status').textContent='free play — use keys or A-K on keyboard';}
+      else{document.getElementById('piano-status').textContent='hold keys as notes arrive';setTimeout(()=>{songNoteIdx=0;scheduleSong(s);},400);}
+    };
+  });
+}
+
+function highlightSongBtn(s){document.querySelectorAll('.song-btn').forEach(b=>{b.classList.toggle('active',b.dataset.song===s)});}
+
+function stopPiano(){
+  pianoActive=false;
+  clearTimeout(songScheduler);
+  songScheduler=null;
+  if(noteRAF){cancelAnimationFrame(noteRAF);noteRAF=null;}
+  stopAllNotes();
+  if(audioCtx && audioCtx.state!=='closed'){
+    audioCtx.suspend().catch(()=>{});
+  }
+  fallingNotes=[];
+  const lane=document.getElementById('notes-lane');
+  if(lane)lane.querySelectorAll('.fnote,.key-ripple').forEach(e=>e.remove());
+}
+
+function ensureAudioRunning(){
+  if(audioCtx && audioCtx.state==='suspended'){
+    audioCtx.resume().catch(()=>{});
+  }
+}
+
+// ════════════════════════════════════════════════
+//  SQUEEZE BALL
+// ════════════════════════════════════════════════
+(function(){
+  const RADIUS = 90;
+  const CX = 100, CY = 100;
+  const BASE_COL  = [162, 100, 250]; // soft purple
+  const SQUISH_COL= [232, 121, 249]; // bright magenta
+
+  let squeezeActive = false;
+  let pressing = false;
+  let pressStart = 0;
+  let currentSquish = 0;   // 0..1
+  let targetSquish  = 0;
+  let squeezeCount  = 0;
+  let maxThisPress  = 0;
+  let streak        = 0;
+  let sqRAF         = null;
+  let particles     = [];
+
+  // Messages by squeeze count milestones
+  const MSGS = [
+    'Hold the ball to begin',
+    'Good… let it out',
+    'Feel the tension release',
+    'Breathe with each squeeze',
+    'You are doing great',
+    'Each squeeze, lighter',
+    'Let the stress dissolve',
+    'Almost there… keep going',
+    'The calm is coming',
+    'Well done ✦',
+  ];
+
+  function getEl(id){ return document.getElementById(id); }
+
+  /* ── Canvas ball renderer ── */
+  function drawBall(squish){
+    const cvs = getEl('sq-canvas');
+    if(!cvs) return;
+    const ctx = cvs.getContext('2d');
+    ctx.clearRect(0,0,200,200);
+
+    // squish deforms the ball: wider, shorter
+    const scaleX = 1 + squish * 0.32;
+    const scaleY = 1 - squish * 0.22;
+    const r = RADIUS;
+
+    ctx.save();
+    ctx.translate(CX, CY);
+    ctx.scale(scaleX, scaleY);
+
+    // Base gradient — shifts color toward magenta when squeezed
+    const t = squish;
+    const col = BASE_COL.map((b,i)=>Math.round(b+(SQUISH_COL[i]-b)*t));
+    const grd = ctx.createRadialGradient(-r*0.28,-r*0.28,r*0.05, 0,0,r);
+    grd.addColorStop(0, `rgba(255,255,255,${0.18+t*0.25})`);
+    grd.addColorStop(0.35, `rgba(${col[0]},${col[1]},${col[2]},0.92)`);
+    grd.addColorStop(1,    `rgba(${Math.max(0,col[0]-60)},${Math.max(0,col[1]-40)},${Math.max(0,col[2]-20)},0.85)`);
+
+    // Shadow blob beneath ball
+    ctx.beginPath();
+    ctx.ellipse(0, r*0.82, r*0.7*scaleX/scaleX, r*0.12, 0, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(0,0,0,${0.18+squish*0.18})`;
+    ctx.fill();
+
+    // Main ball
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, Math.PI*2);
+    ctx.fillStyle = grd;
+    ctx.fill();
+
+    // Specular highlight (top-left glint)
+    const hiGrd = ctx.createRadialGradient(-r*0.3,-r*0.35,1, -r*0.2,-r*0.25,r*0.45);
+    hiGrd.addColorStop(0, `rgba(255,255,255,${0.55-squish*0.25})`);
+    hiGrd.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.beginPath();
+    ctx.arc(0,0,r,0,Math.PI*2);
+    ctx.fillStyle = hiGrd;
+    ctx.fill();
+
+    // Rim light (bottom-right edge glow)
+    const rimGrd = ctx.createRadialGradient(r*0.4,r*0.45,r*0.5, r*0.3,r*0.35,r);
+    rimGrd.addColorStop(0,`rgba(${col[0]+40},${col[1]+20},255,${0.12+squish*0.2})`);
+    rimGrd.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.arc(0,0,r,0,Math.PI*2);
+    ctx.fillStyle = rimGrd;
+    ctx.fill();
+
+    // Outer ring glow pulse
+    ctx.shadowColor = `rgba(${col[0]},${col[1]},${col[2]},${0.5+squish*0.4})`;
+    ctx.shadowBlur  = 20 + squish*40;
+    ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},${0.2+squish*0.5})`;
+    ctx.lineWidth=2+squish*4;
+    ctx.stroke();
+    ctx.shadowBlur=0;
+
+    ctx.restore();
+  }
+
+  /* ── Particle system ── */
+  function spawnParticles(squish){
+    const cvs = getEl('sq-particles');
+    if(!cvs)return;
+    const count = Math.floor(squish*8)+2;
+    for(let i=0;i<count;i++){
+      const angle = Math.random()*Math.PI*2;
+      const speed = (2+Math.random()*4)*squish;
+      particles.push({
+        x:120+Math.cos(angle)*95,
+        y:120+Math.sin(angle)*95,
+        vx:Math.cos(angle)*speed,
+        vy:Math.sin(angle)*speed,
+        r:2+Math.random()*3*squish,
+        life:1,
+        decay:0.04+Math.random()*0.04,
+        col:`hsla(${270+Math.random()*60},90%,${70+squish*20}%,`
+      });
+    }
+  }
+
+  function drawParticles(){
+    const cvs = getEl('sq-particles');
+    if(!cvs)return;
+    const ctx = cvs.getContext('2d');
+    ctx.clearRect(0,0,240,240);
+    particles = particles.filter(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      p.vx*=0.92; p.vy*=0.92;
+      p.life-=p.decay;
+      if(p.life<=0)return false;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2);
+      ctx.fillStyle=p.col+p.life+')';
+      ctx.fill();
+      return true;
+    });
+  }
+
+  /* ── Main animation loop ── */
+  function animate(){
+    if(!squeezeActive){sqRAF=null;return;}
+
+    // Smoothly lerp squish toward target
+    currentSquish += (targetSquish - currentSquish) * 0.18;
+
+    drawBall(currentSquish);
+    drawParticles();
+
+    // Update halo
+    const halo=getEl('sq-halo');
+    if(halo){
+      const s=1+currentSquish*.35;
+      halo.style.transform=`scale(${s})`;
+      halo.style.opacity=0.6+currentSquish*.4;
+    }
+
+    // Meter
+    const fill=getEl('sq-meter-fill');
+    const val=getEl('sq-meter-val');
+    if(fill)fill.style.width=(currentSquish*100)+'%';
+    if(val)val.textContent=Math.round(currentSquish*100);
+
+    // Count bounce
+    const cnt=getEl('sq-count');
+    if(cnt)cnt.style.transform=`scale(${1+currentSquish*.08})`;
+
+    sqRAF=requestAnimationFrame(animate);
+  }
+
+  /* ── Pressure calculation ── */
+  function calcSquish(ms){
+    // 0-80ms = very quick tap → low
+    // 80-400ms = medium hold
+    // 400ms+ = full squeeze
+    return Math.min(ms/600, 1);
+  }
+
+  /* ── Event handlers ── */
+  function onPressStart(e){
+    e.preventDefault();
+    if(!squeezeActive)return;
+    pressing=true;
+    pressStart=performance.now();
+    maxThisPress=0;
+    targetSquish=0.15;
+    vibe([20]); // initial press confirmation
+    if(!sqRAF)sqRAF=requestAnimationFrame(animate);
+  }
+
+  function onPressMove(e){
+    if(!pressing||!squeezeActive)return;
+    e.preventDefault();
+    const held=performance.now()-pressStart;
+    const s=calcSquish(held);
+    targetSquish=s;
+    if(s>maxThisPress){
+      maxThisPress=s;
+      spawnParticles(s);
+    }
+  }
+
+  function onPressEnd(e){
+    if(!pressing||!squeezeActive)return;
+    e.preventDefault();
+    pressing=false;
+    const held=performance.now()-pressStart;
+    const s=calcSquish(held);
+    // Count as a squeeze if held >80ms
+    if(held>80){
+      squeezeCount++;
+      streak++;
+      // Release buzz — stronger the harder the squeeze
+      const intensity = Math.round(30 + s * 70);
+      vibe(streak > 2 ? [intensity, 20, intensity, 15, intensity+20] : [intensity, 25, intensity]);
+      const el=getEl('sq-count');
+      if(el)el.textContent=squeezeCount;
+      const msgEl=getEl('sq-msg');
+      if(msgEl)msgEl.textContent=MSGS[Math.min(squeezeCount,MSGS.length-1)];
+      const strEl=getEl('sq-streak');
+      if(strEl)strEl.textContent=streak>1?'✦ '+streak+' in a row':'';
+      // Particle burst on release
+      spawnParticles(Math.max(s,0.4));
+    } else {
+      streak=0;
+    }
+    targetSquish=0;
+  }
+
+  /* ── Init / teardown ── */
+  window.startSqueeze=function(){
+    squeezeActive=true;
+    pressing=false;
+    currentSquish=0;
+    targetSquish=0;
+    squeezeCount=0;
+    streak=0;
+    particles=[];
+
+    const cnt=getEl('sq-count');if(cnt)cnt.textContent='0';
+    const msg=getEl('sq-msg');if(msg)msg.textContent='hold the ball to begin';
+    const str=getEl('sq-streak');if(str)str.textContent='';
+    const fill=getEl('sq-meter-fill');if(fill)fill.style.width='0%';
+    const val=getEl('sq-meter-val');if(val)val.textContent='0';
+
+    drawBall(0);
+    if(!sqRAF)sqRAF=requestAnimationFrame(animate);
+
+    const cvs=getEl('sq-canvas');
+    if(cvs){
+      cvs.addEventListener('mousedown',onPressStart);
+      cvs.addEventListener('touchstart',onPressStart,{passive:false});
+      document.addEventListener('mousemove',onPressMove);
+      document.addEventListener('touchmove',onPressMove,{passive:false});
+      document.addEventListener('mouseup',onPressEnd);
+      document.addEventListener('touchend',onPressEnd);
+    }
+  };
+
+  window.stopSqueeze=function(){
+    squeezeActive=false;
+    pressing=false;
+    if(sqRAF){cancelAnimationFrame(sqRAF);sqRAF=null;}
+    particles=[];
+    const cvs=getEl('sq-canvas');
+    if(cvs){
+      cvs.removeEventListener('mousedown',onPressStart);
+      cvs.removeEventListener('touchstart',onPressStart);
+    }
+    document.removeEventListener('mousemove',onPressMove);
+    document.removeEventListener('touchmove',onPressMove);
+    document.removeEventListener('mouseup',onPressEnd);
+    document.removeEventListener('touchend',onPressEnd);
+  };
+})();
+
+
+// ════════════════════════════════════════════════
+//  FLOATING BUBBLES
+// ════════════════════════════════════════════════
+(function(){
+  const layer = document.getElementById('bubble-layer');
+  const MIN_R = 14, MAX_R = 52;
+  const MIN_DUR = 10, MAX_DUR = 22;
+  let spawnTimer = null;
+  let active = true;   // starts active (home screen shows first)
+
+  function rand(a, b){ return a + Math.random()*(b-a); }
+
+  /* Called by goTo() whenever screen changes */
+  window.setBubblesActive = function(isHome){
+    active = isHome;
+    layer.style.visibility = isHome ? 'visible' : 'hidden';
+    if(!isHome){
+      clearTimeout(spawnTimer);
+      layer.querySelectorAll('.bubble').forEach(b=>{
+        b.removeEventListener('click', popBubble);
+        b.removeEventListener('touchstart', popBubble);
+        b.style.pointerEvents = 'none';
+      });
+    } else {
+      layer.querySelectorAll('.bubble').forEach(b=>{
+        b.style.pointerEvents = '';
+        b.addEventListener('click', popBubble);
+        b.addEventListener('touchstart', popBubble, {passive:true});
+      });
+      spawnTimer = setTimeout(spawnBubble, rand(600, 1400));
+    }
+  };
+
+  function rand(a, b){ return a + Math.random()*(b-a); }
+
+  function spawnBubble(){
+    if(!active) return;
+    const r   = rand(MIN_R, MAX_R);
+    const x   = rand(r, window.innerWidth - r);
+    const dur = rand(MIN_DUR, MAX_DUR);
+    const drift = rand(-80, 80);   // gentle horizontal wobble
+
+    const el = document.createElement('div');
+    el.className = 'bubble';
+    el.style.cssText = [
+      `width:${r*2}px`,
+      `height:${r*2}px`,
+      `left:${x - r}px`,
+      `--dur:${dur}s`,
+      `--drift:${drift}px`,
+    ].join(';');
+
+    // slightly tinted variants
+    const hue = Math.random() < .5 ? 185 : (Math.random()<.5 ? 270 : 210);
+    el.style.background = `radial-gradient(circle at 32% 28%,
+      rgba(255,255,255,0.45) 0%,
+      hsla(${hue},80%,80%,0.10) 40%,
+      hsla(${hue},90%,60%,0.05) 100%)`;
+
+    el.addEventListener('click', popBubble);
+    el.addEventListener('touchstart', popBubble, {passive:true});
+    layer.appendChild(el);
+
+    // auto-remove once animation ends
+    el.addEventListener('animationend', ()=>el.remove());
+
+    // schedule next bubble
+    const nextDelay = rand(600, 2000);
+    spawnTimer = setTimeout(spawnBubble, nextDelay);
+  }
+
+  function popBubble(e){
+    e.stopPropagation();
+    const el = e.currentTarget;
+    if(el.classList.contains('popping')) return;
+
+    // get center position for the ring
+    const rect = el.getBoundingClientRect();
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top  + rect.height/2;
+    const size = rect.width;
+
+    el.classList.add('popping');
+    el.removeEventListener('click', popBubble);
+    el.removeEventListener('touchstart', popBubble);
+    setTimeout(()=>el.remove(), 260);
+
+    // ripple ring
+    const ring = document.createElement('div');
+    ring.className = 'pop-ring';
+    ring.style.cssText = [
+      `width:${size}px`, `height:${size}px`,
+      `left:${cx - size/2}px`, `top:${cy - size/2}px`
+    ].join(';');
+    document.body.appendChild(ring);
+    ring.addEventListener('animationend', ()=>ring.remove());
+
+    // tiny particle burst
+    ['✦','·','∘','◦'].forEach((g, i)=>{
+      const p = document.createElement('div');
+      p.className = 'poof-particle';
+      p.textContent = g;
+      p.style.left = (cx + rand(-20,20)) + 'px';
+      p.style.top  = cy + 'px';
+      p.style.fontSize = rand(8,14) + 'px';
+      p.style.color = `hsla(${rand(170,290)},90%,75%,1)`;
+      p.style.animationDelay = (i*60) + 'ms';
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(), 900);
+    });
+  }
+
+  // kick off initial burst then steady stream
+  for(let i=0;i<5;i++){
+    setTimeout(()=>{
+      const r   = rand(MIN_R, MAX_R);
+      const x   = rand(r, window.innerWidth - r);
+      const dur = rand(MIN_DUR, MAX_DUR);
+      const drift = rand(-80,80);
+      const el = document.createElement('div');
+      el.className = 'bubble';
+      // start at random height so screen isn't empty on load
+      const startPct = rand(10,80);
+      el.style.cssText = [
+        `width:${r*2}px`,`height:${r*2}px`,
+        `left:${x-r}px`,
+        `bottom:${startPct}vh`,
+        `--dur:${dur*(1-startPct/100)}s`,
+        `--drift:${drift}px`,
+      ].join(';');
+      el.addEventListener('click', popBubble);
+      el.addEventListener('touchstart', popBubble, {passive:true});
+      layer.appendChild(el);
+      el.addEventListener('animationend',()=>el.remove());
+    }, i*400);
+  }
+  setTimeout(spawnBubble, 2200);
+})();
+
+</script>
+</body>
+</html>
