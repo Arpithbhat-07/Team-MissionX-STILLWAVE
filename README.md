@@ -1,11 +1,11 @@
-🌊 STILLWAVE:
+🌊 **STILLWAVE:**
 Pop Stress. Feel Light.
 
 STILLWAVE is a frictionless, touch-based stress relief web application designed to reduce cognitive load and promote emotional regulation through interactive micro-interventions.
 
 Instead of journaling, typing, or navigating complex interfaces, users simply touch, hold, swipe, and breathe.
 
-🧠 Problem Statement
+🧠 **Problem Statement**
 
 Traditional mental health applications demand active cognitive effort — filling forms, writing thoughts, tracking moods.
 
@@ -15,7 +15,8 @@ Thinking is the last thing they want to do.
 
 STILLWAVE removes cognitive friction by offering intuitive, body-first regulation tools powered by motion, sound, and haptics.
 
-✨ Core Features
+✨ **Core Features**
+
 🌊 1. Guided Breathing Orb
 
 Adaptive breathing patterns (4-6-2, 4-7-8, Reset Breath)
@@ -80,7 +81,7 @@ Particle feedback animation
 
 Haptic response
 
-🎨 Immersive Background System
+🎨 **Immersive Background System**
 
 Canvas-based animated particle field
 
@@ -90,7 +91,7 @@ Radial gradient mood lighting
 
 Noise overlay for texture depth
 
-🛠 Tech Stack
+🛠 **Tech Stack**
 
 HTML5
 
@@ -107,7 +108,7 @@ Navigator Vibration API
 No external frameworks.
 Fully custom-built interaction engine.
 
-📱 Design Philosophy
+📱 **Design Philosophy**
 
 STILLWAVE follows a Zero Cognitive Load Model:
 
@@ -121,7 +122,7 @@ Just interaction
 
 The user regulates through touch and sensory feedback, not logic.
 
-🚀 Deployment
+🚀 **Deployment**
 
 This project is deployed as a mobile-first web application via GitHub Pages.
 
@@ -136,7 +137,7 @@ Safari (iOS)
 
 Modern desktop browsers
 
-🔒 Accessibility & Compatibility
+🔒** Accessibility & Compatibility**
 
 Fully responsive layout
 
@@ -146,7 +147,7 @@ Keyboard support for piano
 
 Graceful fallback if vibration is unsupported
 
-🏗 Architecture Overview
+🏗 ** Architecture Overview**
 
 Single-page application with:
 
@@ -162,7 +163,7 @@ Independent tool initialization logic
 
 All logic contained within index.html for portability and simplicity.
 
-🎯 Hackathon Vision
+🎯 **Hackathon Vision**
 
 STILLWAVE demonstrates that:
 
@@ -170,7 +171,7 @@ Mental health tools can be frictionless, sensory-first, and instantly accessible
 
 By removing cognitive barriers, we create space for the body to regulate itself.
 
-👥 Team
+👥 **Team**
 
 Team MissionX:
 
