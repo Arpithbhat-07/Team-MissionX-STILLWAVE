@@ -1,4 +1,4 @@
-🌊 STILLWAVE:
+🌊 STILLWAVE
 Pop Stress. Feel Light.
 
 STILLWAVE is a frictionless, touch-based stress relief web application designed to reduce cognitive load and promote emotional regulation through interactive micro-interventions.
@@ -173,9 +173,13 @@ By removing cognitive barriers, we create space for the body to regulate itself.
 👥 Team
 
 Team MissionX:
+
 Arpith Bhat C - 4SN25AI005  
+
 Aadarsh U     - 4SN25CS001
+
 Siyan Mulla   - 4SN25AI034
+
 Ananya Udupi  - 4SN25CS008
 
 Hackmatrix Final Project Submission
